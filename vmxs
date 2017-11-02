@@ -1,0 +1,49 @@
+#!/usr/bin/perl
+
+sub get_SSHCONFIG ($ID){
+  open (SSH_CONFIG, "vagrant ssh-config $ID|") || die $!;
+    while (<SSH_CONFIG>){
+      s/^ *//g;
+      ($key, $value) = split (" ", $_);
+      chomp $value;
+      $SSH{$key} = $value;
+    }
+  close (SSH_CONFIG); 
+  return %SSH;
+}
+
+sub get_IP ($ID){
+  $IPLIST = `vagrant ssh $ID -- hostname -I`;
+  chomp $IPLIST;
+  return $IPLIST;
+}
+
+open (STATUS, "vagrant global-status|") || die $!;
+  while (<STATUS>) {
+    last if /^-*/;
+  }
+  $SKIPLINE = <STATUS>;
+
+  while (<STATUS>) {
+    last if /^ /;
+    next if /poweroff/;
+    ( $ID, $NAME, $PROVIDER, $STATE, $DIRECTORY ) = split (/ +/, $_);
+    chomp $DIRECTORY;
+    $DIRECTORY =~ s/^.*\///g;
+    $IPLIST = &get_IP($ID);
+    %SSHCONFIG = &get_SSHCONFIG($ID);
+    write;
+  }
+close STATUS;
+print "\n";
+
+format STDOUT_TOP =
+======== ========== ====== ======== ========================
+ID       DIRECTORY  L_PORT USER     IP ADDRESSES
+======== ========== ====== ======== ========================
+.
+
+format STDOUT =
+@<<<<<<< @<<<<<<<<< @<<<<< @<<<<<<< @<<<<<<<<<<<<<<<<<<<<<<<
+$ID,    $DIRECTORY, $SSHCONFIG{Port}, $SSHCONFIG{User}, $IPLIST
+.
