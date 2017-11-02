@@ -20,12 +20,6 @@ sub get_IP ($ID){
 
 open (STATUS, "vagrant global-status|") || die $!;
   while (<STATUS>) {
-    last if /^-*/;
-  }
-  $SKIPLINE = <STATUS>;
-
-  while (<STATUS>) {
-    last if /^ /;
     if ( /running/ ) {
       ( $ID, $NAME, $PROVIDER, $STATE, $DIRECTORY ) = split (/ +/, $_);
       chomp $DIRECTORY;
