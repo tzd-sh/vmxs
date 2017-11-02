@@ -26,13 +26,14 @@ open (STATUS, "vagrant global-status|") || die $!;
 
   while (<STATUS>) {
     last if /^ /;
-    next if /poweroff/;
-    ( $ID, $NAME, $PROVIDER, $STATE, $DIRECTORY ) = split (/ +/, $_);
-    chomp $DIRECTORY;
-    $DIRECTORY =~ s/^.*\///g;
-    $IPLIST = &get_IP($ID);
-    %SSHCONFIG = &get_SSHCONFIG($ID);
-    write;
+    if ( /running/ ) {
+      ( $ID, $NAME, $PROVIDER, $STATE, $DIRECTORY ) = split (/ +/, $_);
+      chomp $DIRECTORY;
+      $DIRECTORY =~ s/^.*\///g;
+      $IPLIST = &get_IP($ID);
+      %SSHCONFIG = &get_SSHCONFIG($ID);
+      write;
+    }
   }
 close STATUS;
 print "\n";
