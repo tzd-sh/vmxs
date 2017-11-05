@@ -24,8 +24,15 @@ open (STATUS, "vagrant global-status|") || die $!;
       ( $ID, $NAME, $PROVIDER, $STATE, $DIRECTORY ) = split (/ +/, $_);
       chomp $DIRECTORY;
       $DIRECTORY =~ s/^.*\///g;
-      $IPLIST = &get_IP($ID);
       %SSHCONFIG = &get_SSHCONFIG($ID);
+      if ( $SSHCONFIG{HostName} =~ /\.amazonaws\.com$/ ){
+        $ADDRESS = $SSHCONFIG{HostName};
+        $PORT = $SSHCONFIG{Port};
+      } else {
+        $ADDRESS = &get_IP($ID);
+        $ADDRESS = "$SSHCONFIG{HostName} $ADDRESS";
+        $PORT = "L_$SSHCONFIG{Port}";
+      }
       write;
     }
   }
@@ -33,12 +40,12 @@ close STATUS;
 print "\n";
 
 format STDOUT_TOP =
-======== ========== ====== ======== ========================
-ID       DIRECTORY  L_PORT USER     IP ADDRESSES
-======== ========== ====== ======== ========================
+======== ========== ====== ======== =========================================
+ID       DIRECTORY  PORT   USER     ADDRESSES
+======== ========== ====== ======== =========================================
 .
 
 format STDOUT =
-@<<<<<<< @<<<<<<<<< @<<<<< @<<<<<<< @<<<<<<<<<<<<<<<<<<<<<<<
-$ID,    $DIRECTORY, $SSHCONFIG{Port}, $SSHCONFIG{User}, $IPLIST
+@<<<<<<< @<<<<<<<<< @>>>>> @<<<<<<< @*
+$ID,    $DIRECTORY, $PORT, $SSHCONFIG{User}, $ADDRESS
 .
