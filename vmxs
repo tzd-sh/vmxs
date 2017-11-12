@@ -33,6 +33,7 @@ open (STATUS, "vagrant global-status|") || die $!;
         $ADDRESS = "$SSHCONFIG{HostName} $ADDRESS";
         $PORT = "L_$SSHCONFIG{Port}";
       }
+      $ADDRESS =~ s/127\.0\.0\.1 //;
       write;
     }
   }
