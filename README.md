@@ -12,9 +12,10 @@ To use, simply download 'vmxs', place it in a folder in your $PATH, and make it 
 Example:
 ```
 $ vmxs
-======== ========== ====== ======== ========================
-ID       DIRECTORY  L_PORT USER     IP ADDRESSES
-======== ========== ====== ======== ========================
-1a2b3c4  instance1  2222   vagrant  10.0.2.15 192.168.1.115
-5d6e7f8  instance2  2200   ubuntu   10.0.2.15 192.168.1.109
+======= ======== ========= ====== ======== =====================================
+ID      NAME     DIRECTORY PORT   USER     ADDRESSES
+======= ======== ========= ====== ======== =====================================
+1a2b3c4 default  instance  L_2201 ubuntu   10.0.2.15 10.0.1.17 172.17.0.1
+5d6e7f8 backend  multi     L_2222 ubuntu   10.0.2.15 10.99.83.20
+9a0b1c2 frontend multi     L_2200 ubuntu   10.0.2.15 192.168.1.125 10.99.83.10
 ```
